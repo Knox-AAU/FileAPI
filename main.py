@@ -10,9 +10,13 @@ config.read('config.ini')
 
 @api.route("/file/<id>")
 def file(id):
-    filePath = GetPath(id)[1:].strip().replace(config.get('main', 'skipPath'), '')
+    filePath = GetPath(id)
+    strippedPath = filePath.strip()
+    skipablePartRemoved = strippedPath.replace(config.get('main', 'skipPath'), '')
+    pathWithoutFirstSlash = skipablePartRemoved [1:]
+
     #Return file
-    return send_file(config.get('main', 'rootDir') + filePath)
+    return send_file(config.get('main', 'rootDir') + pathWithoutFirstSlash)
 
 
 def GetPath(id):
@@ -23,7 +27,7 @@ def GetPath(id):
             user="postgres",
             password="1234")
         cur = conn.cursor()
-        cur.execute("SELECT filepath FROM wordratios w WHERE id =" + id )
+        cur.execute("SELECT filepath FROM filelist WHERE id =" + id )
         row = cur.fetchone()[0]
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
