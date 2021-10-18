@@ -13,7 +13,7 @@ def file(id):
     filePath = GetPath(id)
     strippedPath = filePath.strip()
     skipablePartRemoved = strippedPath.replace(config.get('main', 'skipPath'), '')
-    pathWithoutFirstSlash = skipablePartRemoved [1:]
+    pathWithoutFirstSlash = skipablePartRemoved[1:]
 
     #Return file
     return send_file(config.get('main', 'rootDir') + pathWithoutFirstSlash)
