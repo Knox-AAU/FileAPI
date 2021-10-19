@@ -20,6 +20,7 @@ def file(id):
 
 
 def GetPath(id):
+    row = None
     try:
         conn = psycopg2.connect(
             host="localhost",
@@ -32,10 +33,9 @@ def GetPath(id):
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
-        if conn is not None:
+        if 'conn' in locals() and conn is not None:
             conn.close()
             print('Database connection closed.')
-   
    
     return row
 
