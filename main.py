@@ -1,6 +1,7 @@
 from flask import Flask, send_file
-import psycopg2
+import psycopg2 #Postgres for Python
 import os
+from dotenv import load_dotenv
 from configparser import ConfigParser
 
 
@@ -11,22 +12,25 @@ config.read('config.ini')
 @api.route("/file/<id>")
 def file(id):
     filePath = GetPath(id)
+    
+    #Return file
+    return send_file(modifyFilePath(filePath))
+
+def modifyFilePath(filePath):
     strippedPath = filePath.strip()
     skipablePartRemoved = strippedPath.replace(config.get('main', 'skipPath'), '')
     pathWithoutFirstSlash = skipablePartRemoved[1:]
-
-    #Return file
-    return send_file(config.get('main', 'rootDir') + pathWithoutFirstSlash)
-
+    return config.get('main', 'rootDir') + pathWithoutFirstSlash
 
 def GetPath(id):
     row = None
+    load_dotenv()
     try:
         conn = psycopg2.connect(
-            host="localhost",
-            database="wordcount",
-            user="postgres",
-            password="1234")
+            host     = os.getenv("DB_HOST"),
+            database = os.getenv("DATABASE"),
+            user     = os.getenv("DB_USER"),
+            password = os.getenv("DB_PASSWORD"))
         cur = conn.cursor()
         cur.execute("SELECT filepath FROM filelist WHERE id =" + id )
         row = cur.fetchone()[0]
