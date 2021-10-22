@@ -19,6 +19,9 @@ def file(id):
     return send_file(modifyFilePath(filePath))
 
 def modifyFilePath(filePath):
+    if(filePath is None):
+        return ""
+    
     strippedPath = filePath.strip()
     skipablePartRemoved = strippedPath.replace(config.get('main', 'skipPath'), '')
     pathWithoutFirstSlash = skipablePartRemoved[1:]
