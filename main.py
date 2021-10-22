@@ -1,6 +1,8 @@
-from flask import Flask, send_file
+from genericpath import isfile
+from flask import Flask, send_file,abort
 import psycopg2 #Postgres for Python
 import os
+import os.path
 from dotenv import load_dotenv
 from configparser import ConfigParser
 
@@ -12,7 +14,9 @@ config.read('config.ini')
 @api.route("/file/<id>")
 def file(id):
     filePath = GetPath(id)
-    
+    if(not isfile(modifyFilePath(filePath))):
+        abort(404) 
+        
     #Return file
     return send_file(modifyFilePath(filePath))
 
