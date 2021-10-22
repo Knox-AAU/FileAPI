@@ -3,7 +3,7 @@ import psycopg2 #Postgres for Python
 import os
 from dotenv import load_dotenv
 from configparser import ConfigParser
-
+import platform
 
 api = Flask(__name__)
 config = ConfigParser()
@@ -18,14 +18,21 @@ def file(id):
     #Return file
     return send_file(modifyFilePath(filePath))
 
+def getRootDir():
+    if(platform.system() == 'Windows'):
+        return 'C:/'
+    return '/'
+
 def modifyFilePath(filePath):
+
     if(filePath is None):
         return "" #If filePath is None, the program will crash during the string manipulation
     
     strippedPath = filePath.strip()
     skipablePartRemoved = strippedPath.replace(config.get('main', 'skipPath'), '')
     pathWithoutFirstSlash = skipablePartRemoved[1:]
-    return config.get('main', 'rootDir') + pathWithoutFirstSlash
+
+    return getRootDir() + pathWithoutFirstSlash
 
 def GetPath(id):
     row = None
