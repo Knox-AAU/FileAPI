@@ -1,4 +1,4 @@
-from flask import Flask, send_file
+from flask import Flask, send_file,abort
 import psycopg2 #Postgres for Python
 import os
 from dotenv import load_dotenv
@@ -12,11 +12,16 @@ config.read('config.ini')
 @api.route("/file/<id>")
 def file(id):
     filePath = GetPath(id)
-    
+    if(not os.path.isfile(modifyFilePath(filePath))):
+        abort(404) 
+        
     #Return file
     return send_file(modifyFilePath(filePath))
 
 def modifyFilePath(filePath):
+    if(filePath is None):
+        return "" #If filePath is None, the program will crash during the string manipulation
+    
     strippedPath = filePath.strip()
     skipablePartRemoved = strippedPath.replace(config.get('main', 'skipPath'), '')
     pathWithoutFirstSlash = skipablePartRemoved[1:]
