@@ -20,7 +20,7 @@ def file(id):
 
 def modifyFilePath(filePath):
     if(filePath is None):
-        return ""
+        return "" #If filePath is None, the program will crash during the string manipulation
     
     strippedPath = filePath.strip()
     skipablePartRemoved = strippedPath.replace(config.get('main', 'skipPath'), '')
