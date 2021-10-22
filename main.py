@@ -13,7 +13,7 @@ config.read('config.ini')
 def file(id):
     filePath = GetPath(id)
     if(not os.path.isfile(modifyFilePath(filePath))):
-        abort(404) 
+        abort(404, description="A file cannot be found for the given ID") 
         
     #Return file
     return send_file(modifyFilePath(filePath))
