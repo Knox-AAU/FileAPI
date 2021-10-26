@@ -40,7 +40,7 @@ def GetPath(fileId):
     if (response.status_code not in range(200, 299)):
         abort(404, description=f"A file with a given id was not found status code {response.status_code}") 
 
-    return response.json().FilePath
+    return response.json()["filePath"]
 
 if __name__ == '__main__':
     api.run(host='0.0.0.0', port=config.get('main', 'port'))
