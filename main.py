@@ -15,7 +15,7 @@ def file(fileId):
     if(not os.path.isfile(modifiedFilePath)):
         abort(404, description="A file cannot be found for the given ID") 
         
-    #Return filehttp://localhost:5000/WordRatio/all
+    # Return file
     return send_file(modifyFilePath(filePath))
 
 def getRootDir():
