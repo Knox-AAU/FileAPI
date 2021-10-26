@@ -9,8 +9,8 @@ config = ConfigParser()
 config.read('config.ini')
 
 @api.route("/file/<id>")
-def file(fileId):
-    filePath = GetPath(fileId)
+def file(id):
+    filePath = GetPath(id)
     modifiedFilePath = modifyFilePath(filePath)
     if(not os.path.isfile(modifiedFilePath)):
         abort(404, description="A file cannot be found for the given ID") 
