@@ -35,12 +35,12 @@ def modifyFilePath(filePath):
     return getRootDir() + pathWithoutFirstSlash
 
 def GetPath(fileId):
-    response = requests.get(f'http://knox-master01.srv.aau.dk/wordCountAPI/FileList?id={fileId}')
+    response = requests.get(f'http://knox-master01.srv.aau.dk/wordCountAPI/wordCount/FileList/{fileId}')
 
     if (response.status_code not in range(200, 299)):
-        abort(404, description="A file with a given id was not found") 
+        abort(404, description=f"A file with a given id was not found status code {response.status_code}") 
 
-    return response.json().filePath
+    return response.json()["filePath"]
 
 if __name__ == '__main__':
     api.run(host='0.0.0.0', port=config.get('main', 'port'))
