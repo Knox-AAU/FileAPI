@@ -1,21 +1,21 @@
 from flask import Flask, send_file,abort
-import psycopg2 #Postgres for Python
 import os
-from dotenv import load_dotenv
 from configparser import ConfigParser
 import platform
+import requests
 
 api = Flask(__name__)
 config = ConfigParser()
 config.read('config.ini')
 
 @api.route("/file/<id>")
-def file(id):
-    filePath = GetPath(id)
-    if(not os.path.isfile(modifyFilePath(filePath))):
+def file(fileId):
+    filePath = GetPath(fileId)
+    modifiedFilePath = modifyFilePath(filePath)
+    if(not os.path.isfile(modifiedFilePath)):
         abort(404, description="A file cannot be found for the given ID") 
         
-    #Return file
+    #Return filehttp://localhost:5000/WordRatio/all
     return send_file(modifyFilePath(filePath))
 
 def getRootDir():
@@ -34,26 +34,13 @@ def modifyFilePath(filePath):
 
     return getRootDir() + pathWithoutFirstSlash
 
-def GetPath(id):
-    row = None
-    load_dotenv()
-    try:
-        conn = psycopg2.connect(
-            host     = os.getenv("DB_HOST"),
-            database = os.getenv("DATABASE"),
-            user     = os.getenv("DB_USER"),
-            password = os.getenv("DB_PASSWORD"))
-        cur = conn.cursor()
-        cur.execute("SELECT filepath FROM filelist WHERE id =" + id )
-        row = cur.fetchone()[0]
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if 'conn' in locals() and conn is not None:
-            conn.close()
-            print('Database connection closed.')
-   
-    return row
+def GetPath(fileId):
+    response = requests.get(f"http://http://knox-master01.srv.aau.dk/wordCountAPI/FileList?id={fileId}")
+
+    if (response.status_code not in range(200, 299)):
+        abort(404, description="A file cannot be found for the given ID") 
+
+    return response.json().filePath
 
 if __name__ == '__main__':
     api.run(host='0.0.0.0', port=config.get('main', 'port'))
